@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ريادة الأعمال — من الفكرة إلى المشروع الناشئ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg-1:#150826;
+  --bg-2:#221040;
+  --bg-3:#2d1554;
+  --violet:#8b5cf6;
+  --violet-2:#7c3aed;
+  --lilac:#c084fc;
+  --pink:#e879f9;
+  --gold:#fbbf24;
+  --text:#f4f0ff;
+  --muted:#c3b4e2;
+  --card:rgba(139,92,246,.08);
+  --card-brd:rgba(192,132,252,.22);
+  --shadow:0 24px 60px -18px rgba(0,0,0,.55);
+  --ease:cubic-bezier(.22,.9,.28,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  font-family:'Tajawal','Cairo',system-ui,sans-serif;
+  background:radial-gradient(1200px 800px at 85% -10%,var(--bg-3),transparent 60%),
+             radial-gradient(1000px 700px at 0% 110%,#3b1a6e,transparent 55%),
+             linear-gradient(160deg,var(--bg-1),var(--bg-2) 60%,#1a0b33);
+  color:var(--text);
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:'Cairo',sans-serif}
+
+/* ===== خلفية متحركة ===== */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.5;will-change:transform}
+.blob.b1{width:44vw;height:44vw;background:radial-gradient(circle,#7c3aed,transparent 70%);top:-14vw;right:-10vw;animation:drift1 22s ease-in-out infinite alternate}
+.blob.b2{width:34vw;height:34vw;background:radial-gradient(circle,#c026d3,transparent 70%);bottom:-12vw;left:-8vw;opacity:.35;animation:drift2 26s ease-in-out infinite alternate}
+.blob.b3{width:22vw;height:22vw;background:radial-gradient(circle,#4c1d95,transparent 70%);top:40%;left:35%;opacity:.45;animation:drift3 30s ease-in-out infinite alternate}
+@keyframes drift1{to{transform:translate(-9vw,7vh) scale(1.15)}}
+@keyframes drift2{to{transform:translate(10vw,-8vh) scale(1.1)}}
+@keyframes drift3{to{transform:translate(-6vw,-6vh) scale(.9)}}
+.grain{position:absolute;inset:0;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E")}
+.cursor-glow{position:fixed;width:520px;height:520px;border-radius:50%;pointer-events:none;z-index:1;
+  background:radial-gradient(circle,rgba(168,85,247,.16),transparent 65%);
+  transform:translate(-50%,-50%);left:50%;top:50%;will-change:left,top}
+
+/* ===== الشريط العلوي ===== */
+.topbar{position:fixed;top:0;right:0;left:0;z-index:20;display:flex;align-items:center;gap:18px;
+  padding:16px 26px;backdrop-filter:blur(8px);
+  background:linear-gradient(to bottom,rgba(21,8,38,.75),transparent)}
+.brand{display:flex;align-items:center;gap:10px;font-family:'Cairo';font-weight:800;font-size:17px;letter-spacing:.2px}
+.brand .logo{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--violet),var(--pink));box-shadow:0 8px 20px -6px rgba(168,85,247,.6)}
+.brand .logo svg{width:19px;height:19px;stroke:#fff}
+.brand small{color:var(--muted);font-weight:400;font-family:'Tajawal';font-size:12px}
+.progress{flex:1;height:5px;border-radius:99px;background:rgba(192,132,252,.16);overflow:hidden}
+.progress span{display:block;height:100%;width:12.5%;border-radius:99px;
+  background:linear-gradient(90deg,var(--violet-2),var(--lilac),var(--pink));
+  transition:width .55s var(--ease);box-shadow:0 0 14px rgba(192,132,252,.7)}
+.overview-btn{display:flex;align-items:center;gap:8px;border:1px solid var(--card-brd);cursor:pointer;
+  background:var(--card);color:var(--text);font-family:'Tajawal';font-size:13px;font-weight:500;
+  padding:8px 14px;border-radius:12px;transition:.25s}
+.overview-btn:hover{background:rgba(139,92,246,.2);border-color:var(--lilac);transform:translateY(-1px)}
+.overview-btn svg{width:15px;height:15px;stroke:var(--lilac)}
+
+/* ===== المسرح ===== */
+.deck{position:fixed;inset:0;z-index:10}
+.slide{position:absolute;inset:0;display:grid;place-items:center;padding:96px 6vw 120px;
+  opacity:0;visibility:hidden;transform:translateX(-90px) scale(.965);
+  transition:opacity .55s ease,transform .65s var(--ease),visibility 0s linear .6s}
+.slide.before{transform:translateX(90px) scale(.965)}
+.slide.active{opacity:1;visibility:visible;transform:none;
+  transition:opacity .6s ease .08s,transform .7s var(--ease) .08s,visibility 0s}
+.slide-inner{width:min(1120px,100%);position:relative;z-index:2}
+.ghost{position:absolute;bottom:56px;left:34px;z-index:1;font-family:'Cairo';font-weight:900;
+  font-size:clamp(90px,15vw,190px);line-height:1;color:transparent;
+  -webkit-text-stroke:1.5px rgba(192,132,252,.16);user-select:none;pointer-events:none}
+
+.slide.active .rise{animation:riseIn .75s var(--ease) both;animation-delay:var(--d,0s)}
+@keyframes riseIn{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+
+/* ===== عناصر عامة ===== */
+.kicker{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--lilac);
+  background:rgba(139,92,246,.14);border:1px solid var(--card-brd);padding:6px 14px;border-radius:99px}
+.kicker::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--pink);box-shadow:0 0 10px var(--pink)}
+h2{font-size:clamp(28px,4.2vw,46px);font-weight:900;margin:14px 0 8px}
+h2 .grad,.grad{background:linear-gradient(120deg,var(--lilac),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{color:var(--muted);font-size:clamp(15px,1.5vw,18px);line-height:1.9;max-width:760px;font-weight:300}
+.slide-head{margin-bottom:34px}
+
+.cards{display:grid;gap:18px}
+.cards-3{grid-template-columns:repeat(3,1fr)}
+.cards-2{grid-template-columns:repeat(2,1fr)}
+.card{position:relative;background:var(--card);border:1px solid var(--card-brd);border-radius:20px;
+  padding:26px 24px;backdrop-filter:blur(6px);box-shadow:var(--shadow);
+  transition:transform .35s var(--ease),border-color .35s,background .35s}
+.card:hover{transform:translateY(-6px);border-color:var(--lilac);background:rgba(139,92,246,.14)}
+.card .icon{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;margin-bottom:16px;
+  background:linear-gradient(135deg,rgba(139,92,246,.35),rgba(232,121,249,.25));border:1px solid var(--card-brd)}
+.card .icon svg{width:24px;height:24px;stroke:var(--lilac);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.card h3{font-size:19px;font-weight:800;margin-bottom:8px}
+.card p{color:var(--muted);font-size:14.5px;line-height:1.85;font-weight:300}
+.card .num{position:absolute;top:18px;left:20px;font-family:'Cairo';font-weight:900;font-size:15px;color:rgba(192,132,252,.5)}
+
+.callout{margin-top:26px;display:flex;align-items:center;gap:14px;padding:18px 22px;border-radius:16px;
+  background:linear-gradient(120deg,rgba(139,92,246,.18),rgba(232,121,249,.1));
+  border:1px solid var(--card-brd);font-size:15px;line-height:1.9}
+.callout svg{width:26px;height:26px;flex-shrink:0;stroke:var(--gold);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.callout b{color:var(--lilac)}
+
+/* ===== الغلاف ===== */
+.slide-cover .slide-inner{text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px}
+.badge{display:inline-flex;align-items:center;gap:9px;font-family:'Cairo';font-weight:700;font-size:14px;
+  color:var(--lilac);border:1px solid var(--card-brd);background:var(--card);
+  padding:9px 20px;border-radius:99px;backdrop-filter:blur(6px)}
+.badge .star{color:var(--pink);font-size:15px}
+.cover-title{font-size:clamp(52px,9vw,110px);font-weight:900;line-height:1.15;margin:18px 0 6px}
+.cover-sub{color:var(--muted);font-size:clamp(16px,2vw,21px);font-weight:300;line-height:1.9;max-width:640px}
+.cover-meta{display:flex;align-items:center;gap:14px;margin-top:30px;font-size:13.5px;color:var(--muted)}
+.cover-meta .sep{width:5px;height:5px;border-radius:50%;background:var(--pink)}
+.cover-rings{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+.ring{position:absolute;border-radius:50%;border:1.5px solid rgba(192,132,252,.16)}
+.ring.r1{width:min(58vmin,540px);height:min(58vmin,540px);animation:spin 40s linear infinite}
+.ring.r2{width:min(74vmin,680px);height:min(74vmin,680px);border-style:dashed;border-color:rgba(192,132,252,.1);animation:spin 60s linear infinite reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+.cover-orb{position:absolute;width:14px;height:14px;border-radius:50%;background:var(--pink);
+  box-shadow:0 0 24px var(--pink);top:50%;right:50%}
+.cover-orb.o1{transform-origin:0 0;animation:orbit1 14s linear infinite}
+.cover-orb.o2{width:9px;height:9px;background:var(--lilac);box-shadow:0 0 20px var(--lilac);animation:orbit2 20s linear infinite}
+@keyframes orbit1{from{transform:rotate(0) translateX(min(29vmin,270px))}to{transform:rotate(360deg) translateX(min(29vmin,270px))}}
+@keyframes orbit2{from{transform:rotate(0) translateX(min(37vmin,340px))}to{transform:rotate(360deg) translateX(min(37vmin,340px))}}
+
+/* ===== الخط الزمني ===== */
+.timeline{display:grid;grid-template-columns:repeat(5,1fr);gap:0;position:relative;margin-top:8px}
+.timeline::before{content:"";position:absolute;top:29px;right:8%;left:8%;height:2px;
+  background:linear-gradient(90deg,var(--violet-2),var(--pink));opacity:.5}
+.step{position:relative;text-align:center;padding:0 10px}
+.step .dot{width:58px;height:58px;margin:0 auto 16px;border-radius:50%;display:grid;place-items:center;
+  background:linear-gradient(135deg,rgba(139,92,246,.3),rgba(232,121,249,.2));
+  border:1.5px solid var(--lilac);position:relative;z-index:2;
+  box-shadow:0 0 0 8px rgba(139,92,246,.12),0 10px 24px -8px rgba(124,58,237,.6)}
+.step .dot svg{width:26px;height:26px;stroke:var(--lilac);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.step h3{font-size:16.5px;font-weight:800;margin-bottom:6px}
+.step p{color:var(--muted);font-size:13px;line-height:1.75;font-weight:300}
+.step .phase{font-family:'Cairo';font-size:12px;font-weight:700;color:var(--pink);display:block;margin-bottom:8px}
+
+/* ===== قائمة الأسئلة ===== */
+.check-list{list-style:none;display:grid;gap:14px}
+.check-list li{display:flex;align-items:flex-start;gap:12px;background:var(--card);
+  border:1px solid var(--card-brd);border-radius:14px;padding:15px 18px;font-size:15px;line-height:1.8}
+.check-list li svg{width:20px;height:20px;flex-shrink:0;stroke:var(--pink);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-top:4px}
+.check-list li b{color:var(--lilac)}
+
+/* ===== شبكة BMC ===== */
+.bmc{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.bmc .tile{background:var(--card);border:1px solid var(--card-brd);border-radius:16px;padding:20px 18px;
+  transition:transform .3s var(--ease),border-color .3s}
+.bmc .tile:hover{transform:translateY(-4px) rotate(-.5deg);border-color:var(--pink)}
+.bmc .tile .t-icon{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;margin-bottom:12px;
+  background:rgba(232,121,249,.14);border:1px solid var(--card-brd)}
+.bmc .tile .t-icon svg{width:18px;height:18px;stroke:var(--pink);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bmc .tile h3{font-size:15.5px;font-weight:800;margin-bottom:5px}
+.bmc .tile p{color:var(--muted);font-size:12.5px;line-height:1.7;font-weight:300}
+
+/* ===== الخاتمة ===== */
+.final-cta{margin-top:30px;text-align:center}
+.final-cta .big{font-family:'Cairo';font-size:clamp(22px,3vw,32px);font-weight:900}
+.final-cta .big .grad{font-weight:900}
+.final-cta p{color:var(--muted);margin-top:10px;font-weight:300}
+
+/* ===== شريط التنقل ===== */
+.navbar{position:fixed;bottom:0;right:0;left:0;z-index:20;display:flex;align-items:center;justify-content:space-between;
+  gap:16px;padding:18px 26px;backdrop-filter:blur(8px);
+  background:linear-gradient(to top,rgba(21,8,38,.85),transparent)}
+.nav-btns{display:flex;gap:10px}
+.nav-btn{width:46px;height:46px;border-radius:14px;border:1px solid var(--card-brd);cursor:pointer;
+  background:var(--card);color:var(--text);display:grid;place-items:center;transition:.25s}
+.nav-btn:hover{background:rgba(139,92,246,.25);border-color:var(--lilac);transform:translateY(-2px)}
+.nav-btn:active{transform:scale(.94)}
+.nav-btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.nav-btn svg{width:20px;height:20px;stroke:var(--lilac);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.counter{display:flex;align-items:baseline;gap:6px;font-family:'Cairo';font-weight:800;font-size:19px;min-width:86px;justify-content:center}
+.counter .cur{color:var(--pink);font-size:26px;text-shadow:0 0 18px rgba(232,121,249,.5)}
+.counter .sep{color:var(--muted)}
+.counter .total{color:var(--muted);font-size:15px}
+.dots{display:flex;gap:9px;align-items:center}
+.dot-nav{width:10px;height:10px;border-radius:99px;border:1px solid var(--card-brd);background:transparent;
+  cursor:pointer;padding:0;transition:.3s}
+.dot-nav:hover{border-color:var(--lilac)}
+.dot-nav.on{width:26px;background:linear-gradient(90deg,var(--violet),var(--pink));border-color:transparent;
+  box-shadow:0 0 12px rgba(192,132,252,.6)}
+.keys-hint{position:fixed;bottom:78px;left:50%;transform:translateX(-50%);z-index:15;
+  font-size:12px;color:var(--muted);background:rgba(21,8,38,.6);border:1px solid rgba(192,132,252,.15);
+  padding:6px 16px;border-radius:99px;backdrop-filter:blur(6px);pointer-events:none;
+  opacity:0;animation:hintFade 7s ease forwards}
+@keyframes hintFade{0%{opacity:0}8%{opacity:1}75%{opacity:1}100%{opacity:0}}
+.keys-hint b{color:var(--lilac);font-weight:500}
+
+/* ===== العرض الشامل ===== */
+.overview{position:fixed;inset:0;z-index:40;display:grid;place-items:center;padding:5vh 5vw;
+  background:rgba(15,5,28,.88);backdrop-filter:blur(14px);
+  opacity:0;visibility:hidden;transition:.4s var(--ease)}
+.overview.open{opacity:1;visibility:visible}
+.ov-grid{width:min(1080px,100%);display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.ov-card{position:relative;text-align:right;cursor:pointer;border:1px solid var(--card-brd);
+  background:var(--card);border-radius:18px;padding:22px;min-height:130px;
+  transition:transform .3s var(--ease),border-color .3s,background .3s;
+  opacity:0;transform:translateY(20px)}
+.overview.open .ov-card{animation:riseIn .5s var(--ease) both;animation-delay:calc(var(--i)*.06s)}
+.ov-card:hover{transform:translateY(-5px) scale(1.02);border-color:var(--pink);background:rgba(139,92,246,.18)}
+.ov-card .n{font-family:'Cairo';font-weight:900;font-size:24px;color:var(--pink);opacity:.85}
+.ov-card h3{font-size:16px;font-weight:800;margin-top:8px;line-height:1.5}
+.ov-card p{font-size:12px;color:var(--muted);margin-top:6px;font-weight:300}
+.ov-close{position:absolute;top:22px;left:26px;width:44px;height:44px;border-radius:12px;cursor:pointer;
+  border:1px solid var(--card-brd);background:var(--card);color:var(--text);display:grid;place-items:center;transition:.25s}
+.ov-close:hover{background:rgba(232,121,249,.2);border-color:var(--pink)}
+.ov-close svg{width:18px;height:18px;stroke:var(--lilac);stroke-width:2.2;stroke-linecap:round}
+
+/* ===== استجابة ===== */
+@media (max-width:900px){
+  .cards-3{grid-template-columns:repeat(2,1fr)}
+  .timeline{grid-template-columns:repeat(2,1fr);gap:26px 12px}
+  .timeline::before{display:none}
+  .bmc{grid-template-columns:repeat(2,1fr)}
+  .ov-grid{grid-template-columns:repeat(2,1fr)}
+  .ghost{display:none}
+}
+@media (max-width:600px){
+  .cards-3,.cards-2,.bmc{grid-template-columns:1fr}
+  .timeline{grid-template-columns:1fr}
+  .ov-grid{grid-template-columns:1fr}
+  .navbar{flex-wrap:wrap;justify-content:center}
+  .keys-hint{display:none}
+  .brand small{display:none}
+  .overview-btn span{display:none}
+  .slide{padding:88px 5vw 150px}
+}
+</style>
+</head>
+<body>
+
+<!-- خلفية -->
+<div class="bg">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+  <div class="grain"></div>
+</div>
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<!-- الشريط العلوي -->
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3"/></svg>
+    </span>
+    ريادة الأعمال <small>عرض تقديمي</small>
+  </div>
+  <div class="progress"><span id="progressBar"></span></div>
+  <button class="overview-btn" id="overviewBtn" title="العرض الشامل (O)">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+    <span>العرض الشامل</span>
+  </button>
+</header>
+
+<!-- المسرح -->
+<main class="deck" id="deck">
+
+  <!-- 1) الغلاف -->
+  <section class="slide slide-cover active">
+    <div class="cover-rings">
+      <div class="ring r1"></div>
+      <div class="ring r2"></div>
+      <div class="cover-orb o1"></div>
+      <div class="cover-orb o2"></div>
+    </div>
+    <div class="slide-inner">
+      <span class="badge rise" style="--d:.05s"><span class="star">✦</span> عرض تقديمي تفاعلي</span>
+      <h1 class="cover-title rise" style="--d:.15s">ريادة <span class="grad">الأعمال</span></h1>
+      <p class="cover-sub rise" style="--d:.3s">من الفكرة إلى المشروع الناشئ — دليلك العملي لبناء مشاريع تُحدِث أثراً حقيقياً في العالم</p>
+      <div class="cover-meta rise" style="--d:.45s">
+        <span>٨ شرائح</span><span class="sep"></span>
+        <span>تنقّل بالأسهم أو السحب أو عجلة الفأرة</span><span class="sep"></span>
+        <span>اضغط O للعرض الشامل</span>
+      </div>
+    </div>
+    <span class="ghost">٠١</span>
+  </section>
+
+  <!-- 2) التعريف -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="slide-head">
+        <span class="kicker rise" style="--d:.05s">التعريف</span>
+        <h2 class="rise" style="--d:.12s">ما هي <span class="grad">ريادة الأعمال</span>؟</h2>
+        <p class="lead rise" style="--d:.2s">عملية تحويل فكرة مبتكرة إلى مشروع حقيقي يخلق قيمة، ويحل مشكلة، ويحقق نمواً مستداماً بمرور الوقت.</p>
+      </div>
+      <div class="cards cards-3">
+        <article class="card rise" style="--d:.28s">
+          <span class="num">٠١</span>
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.7 1 1.5 1 2.5h6c0-1 .2-1.8 1-2.5A6 6 0 0 0 12 3z"/></svg></div>
+          <h3>ابتكار</h3>
+          <p>تقديم حل جديد أو أفضل يغيّر طريقة الناس في العمل أو الحياة، ويصنع فارقاً ملموساً.</p>
+        </article>
+        <article class="card rise" style="--d:.38s">
+          <span class="num">٠٢</span>
+          <div class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></svg></div>
+          <h3>قيمة</h3>
+          <p>حل مشكلة حقيقية أو تلبية حاجة يرغب الناس فعلاً في دفع ثمنها وتحسين حياتهم به.</p>
+        </article>
+        <article class="card rise" style="--d:.48s">
+          <span class="num">٠٣</span>
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M3 12c3-5 6-7 9-7s6 2 9 7c-3 5-6 7-9 7s-6-2-9-7z"/><circle cx="12" cy="12" r="2.5"/></svg></div>
+          <h3>مخاطرة محسوبة</h3>
+          <p>التقدم بثقة وسط عدم اليقين، مع تعلّم سريع من النتائج وتصحيح المسار باستمرار.</p>
+        </article>
+      </div>
+    </div>
+    <span class="ghost">٠٢</span>
+  </section>
+
+  <!-- 3) صفات رائد الأعمال -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="slide-head">
+        <span class="kicker rise" style="--d:.05s">الشخصية</span>
+        <h2 class="rise" style="--d:.12s">صفات رائد الأعمال <span class="grad">الناجح</span></h2>
+        <p class="lead rise" style="--d:.2s">المهارات التقنية مهمة، لكن هذه الست صفات هي ما يصنع الفارق بين فكرة وحلم ومشروع قائم.</p>
+      </div>
+      <div class="cards cards-3">
+        <article class="card rise" style="--d:.26s">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.3-9A5.4 5.4 0 0 1 12 6.6 5.4 5.4 0 0 1 21.3 12C19 16.4 12 21 12 21z"/></svg></div>
+          <h3>الشغف والطاقة</h3>
+          <p>دافع داخلي حقيقي يمنحك صبر الأيام الصعبة ويُعدي فريقك حماساً.</p>
+        </article>
+        <article class="card rise" style="--d:.34s">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M4 17c4-1 5-8 9-8s4 4 7 4M4 17l2-2M4 17l2 2"/></svg></div>
+          <h3>المرونة والتكيّف</h3>
+          <p>القدرة على تعديل الخطة بسرعة عند تغيّر السوق دون فقدان الهدف.</p>
+        </article>
+        <article class="card rise" style="--d:.42s">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M14.5 6.5a4 4 0 0 0-5.6 5.6L4 17l3 3 4.9-4.9a4 4 0 0 0 5.6-5.6l-2.7 2.7-2-2 2.7-2.7z"/></svg></div>
+          <h3>حل المشكلات</h3>
+          <p>رؤية العقبات كألغاز تُحل، وتحويل التحديات إلى فرص للتحسين.</p>
+        </article>
+        <article class="card rise" style="--d:.5s">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM21 21v-2a4 4 0 0 0-3-3.87M15 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <h3>القيادة وبناء الفريق</h3>
+          <p>استقطاب المواهب وبناء ثقافة تُحفّز الجميع على بذل أفضل ما لديهم.</p>
+        </article>
+        <article class="card rise" style="--d:.58s">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M4 19V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zm0 0a2 2 0 0 0 2 2h13M9 7h6"/></svg></div>
+          <h3>التعلّم المستمر</h3>
+          <p>فضول لا يتوقف: قراءة، تجربة، واستماع — فالمعرفة وقود النمو.</p>
+        </article>
+        <article class="card rise" style="--d:.66s">
+          <div class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 14 0v1"/></svg></div>
+          <h3>التركيز على العميل</h3>
+          <p>البدء من احتياج العميل لا من المنتج، والعميل هو الحكّم الأول والأخير.</p>
+        </article>
+      </div>
+    </div>
+    <span class="ghost">٠٣</span>
+  </section>
+
+  <!-- 4) رحلة المشروع الناشئ -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="slide-head">
+        <span class="kicker rise" style="--d:.05s">المسار</span>
+        <h2 class="rise" style="--d:.12s">رحلة <span class="grad">المشروع الناشئ</span> في ٥ مراحل</h2>
+        <p class="lead rise" style="--d:.2s">من شرارة الفكرة حتى النمو والتوسع — مسار واضح يقلل الضياع ويُسرع النتيجة.</p>
+      </div>
+      <div class="timeline">
+        <div class="step rise" style="--d:.26s">
+          <div class="dot"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.7 1 1.5 1 2.5h6c0-1 .2-1.8 1-2.5A6 6 0 0 0 12 3z"/></svg></div>
+          <span class="phase">المرحلة ١</span>
+          <h3>الفكرة</h3>
+          <p>حدّد المشكلة بوضوح: من يعاني منها؟ ولماذا تستحق الحل؟</p>
+        </div>
+        <div class="step rise" style="--d:.36s">
+          <div class="dot"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div>
+          <span class="phase">المرحلة ٢</span>
+          <h3>التحقق</h3>
+          <p>استمع للعملاء المحتملين، وتأكد أن الطلب موجود فعلاً لا نظرياً.</p>
+        </div>
+        <div class="step rise" style="--d:.46s">
+          <div class="dot"><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg></div>
+          <span class="phase">المرحلة ٣</span>
+          <h3>النموذج الأولي MVP</h3>
+          <p>ابنِ أبسط نسخة تحل المشكلة، واختبرها مع أوائل العملاء.</p>
+        </div>
+        <div class="step rise" style="--d:.56s">
+          <div class="dot"><svg viewBox="0 0 24 24"><path d="M4.5 16.5L12 4l7.5 12.5M12 4v9"/><path d="M8 15h8l1 5H7z"/></svg></div>
+          <span class="phase">المرحلة ٤</span>
+          <h3>الإطلاق</h3>
+          <p>ادخل السوق، اجمع البيانات الأولى، وابدأ الدوران حول العميل.</p>
+        </div>
+        <div class="step rise" style="--d:.66s">
+          <div class="dot"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg></div>
+          <span class="phase">المرحلة ٥</span>
+          <h3>النمو</h3>
+          <p>كرّر ما ينجح، حسّن ما لا ينجح، ووسّع قاعدة عملائك بثبات.</p>
+        </div>
+      </div>
+      <div class="callout rise" style="--d:.78s">
+        <svg viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z"/></svg>
+        <div>القاعدة الذهبية: <b>لا تبنِ قلعة كاملة لفكرة لم يختبرها أحد</b> — ابدأ صغيراً، وتعلم بسرعة، ثم كبّر.</div>
+      </div>
+    </div>
+    <span class="ghost">٠٤</span>
+  </section>
+
+  <!-- 5) التحقق من الفكرة -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="slide-head">
+        <span class="kicker rise" style="--d:.05s">قبل البناء</span>
+        <h2 class="rise" style="--d:.12s">التحقق من الفكرة <span class="grad">ودراسة السوق</span></h2>
+        <p class="lead rise" style="--d:.2s">التحقق الجيد يوفر عليك شهوراً من العمل في منتج لا يريده أحد.</p>
+      </div>
+      <div class="cards cards-2">
+        <div>
+          <ul class="check-list">
+            <li class="rise" style="--d:.28s"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><div><b>من هو عميلك المثالي؟</b><br>حدّد شريحته الديموغرافية والسلوكية بدقة.</div></li>
+            <li class="rise" style="--d:.36s"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><div><b>ما المشكلة التي يعاني منها؟</b><br>وهل هي مشكلة مؤلمة بما يكفي ليدفع مقابل حلها؟</div></li>
+            <li class="rise" style="--d:.44s"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><div><b>كيف يحلها اليوم؟</b><br>افهم البدائل الحالية قبل أن تزيح شيئاً قائماً.</div></li>
+            <li class="rise" style="--d:.52s"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><div><b>كم سيدفع فعلياً؟</b><br>الاهتمام ≠ الشراء؛ قِس الاستعداد للدفع.</div></li>
+          </ul>
+        </div>
+        <div class="cards" style="gap:14px">
+          <article class="card rise" style="--d:.3s">
+            <div class="icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+            <h3>مقابلات العملاء</h3><p>حوارات مباشرة مع ١٠–٢٠ عميلاً محتملاً، أسئلة مفتوحة واستماع أكثر من الكلام.</p>
+          </article>
+          <article class="card rise" style="--d:.4s">
+            <div class="icon"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+            <h3>الاستبيانات</h3><p>استطلاعات رقمية لقياس حجم الاهتمام وجمع بيانات كمية داعمة.</p>
+          </article>
+          <article class="card rise" style="--d:.5s">
+            <div class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14 0 18M12 3c-3 3.5-3 14 0 18"/></svg></div>
+            <h3>تحليل المنافسين</h3><p>ارسم خريطة الحلول البديلة، واوجد مكانك الفارغ للتميّز.</p>
+          </article>
+        </div>
+      </div>
+      <div class="callout rise" style="--d:.62s">
+        <svg viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg>
+        <div>استمع لعشرة عملاء قبل بناء أي شيء — <b>الاستماع أرخص من إعادة البناء</b>.</div>
+      </div>
+    </div>
+    <span class="ghost">٠٥</span>
+  </section>
+
+  <!-- 6) نموذج العمل التجاري -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="slide-head">
+        <span class="kicker rise" style="--d:.05s">الأداة</span>
+        <h2 class="rise" style="--d:.12s">نموذج العمل التجاري <span class="grad">Business Model Canvas</span></h2>
+        <p class="lead rise" style="--d:.2s">لوحة واحدة ترسم مشروعك كاملاً: من تخدم، بما تتميز، كيف تصل، وكيف تربح.</p>
+      </div>
+      <div class="bmc">
+        <div class="tile rise" style="--d:.24s"><div class="t-icon"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20v-1a6.5 6.5 0 0 1 13 0v1M16 4.6a3.5 3.5 0 0 1 0 6.8M21.5 20v-1a6.5 6.5 0 0 0-4-6"/></svg></div><h3>شرائح العملاء</h3><p>لمن نقدّم القيمة؟</p></div>
+        <div class="tile rise" style="--d:.3s"><div class="t-icon"><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg></div><h3>القيمة المقترحة</h3><p>لماذا يختارنا العميل؟</p></div>
+        <div class="tile rise" style="--d:.36s"><div class="t-icon"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg></div><h3>القنوات</h3><p>كيف نصل إلى العميل؟</p></div>
+        <div class="tile rise" style="--d:.42s"><div class="t-icon"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.3-9A5.4 5.4 0 0 1 12 6.6 5.4 5.4 0 0 1 21.3 12C19 16.4 12 21 12 21z"/></svg></div><h3>علاقات العملاء</h3><p>كيف نكتسب ونحتفظ؟</p></div>
+        <div class="tile rise" style="--d:.48s"><div class="t-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M15 9.5c0-1.4-1.3-2.5-3-2.5s-3 .9-3 2.2c0 3 6 1.6 6 4.6 0 1.3-1.3 2.2-3 2.2s-3-1.1-3-2.5"/></svg></div><h3>مصادر الإيرادات</h3><p>كيف يربح المشروع؟</p></div>
+        <div class="tile rise" style="--d:.54s"><div class="t-icon"><svg viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8"/></svg></div><h3>الموارد الرئيسية</h3><p>ما الذي نحتاجه للعمل؟</p></div>
+        <div class="tile rise" style="--d:.6s"><div class="t-icon"><svg viewBox="0 0 24 24"><path d="M14.5 6.5a4 4 0 0 0-5.6 5.6L4 17l3 3 4.9-4.9a4 4 0 0 0 5.6-5.6l-2.7 2.7-2-2 2.7-2.7z"/></svg></div><h3>الأنشطة الرئيسية</h3><p>ماذا نفعل يومياً للنجاح؟</p></div>
+        <div class="tile rise" style="--d:.66s"><div class="t-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM21 21v-2a4 4 0 0 0-3-3.87M15 3.13a4 4 0 0 1 0 7.75"/></svg></div><h3>الشركاء الرئيسيون</h3><p>من يساعدنا على النمو؟</p></div>
+        <div class="tile rise" style="--d:.72s"><div class="t-icon"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg></div><h3>هيكل التكاليف</h3><p>ما أهم مصاريف المشروع؟</p></div>
+      </div>
+    </div>
+    <span class="ghost">٠٦</span>
+  </section>
+
+  <!-- 7) التمويل -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="slide-head">
+        <span class="kicker rise" style="--d:.05s">المال</span>
+        <h2 class="rise" style="--d:.12s">خيارات <span class="grad">التمويل</span> للمشروع الناشئ</h2>
+        <p class="lead rise" style="--d:.2s">لا يوجد تمويل مثالي واحد — اختر ما يناسب مرحلتك ووتيرة نموّك.</p>
+      </div>
+      <div class="cards cards-2">
+        <article class="card rise" style="--d:.26s">
+          <span class="num">أ</span>
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 6.5c0-2-2.2-3-5-3s-5 1-5 3 1.8 2.7 5 3.2 5 1.3 5 3.3-2.2 3-5 3-5-1-5-3"/></svg></div>
+          <h3>التمويل الذاتي</h3>
+          <p>تمويل من مدخراتك أو إيرادات المشروع الأولى. تحكم كامل في القرار وضرورة قوية للانضباط المالي.</p>
+        </article>
+        <article class="card rise" style="--d:.34s">
+          <span class="num">ب</span>
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg></div>
+          <h3>المستثمرون الملائكة</h3>
+          <p>أفراد أثرياء يستثمرون في المراحل المبكرة مقابل حصة، وعادة ما يضيفون خبرة وشبكة علاقات.</p>
+        </article>
+        <article class="card rise" style="--d:.42s">
+          <span class="num">ج</span>
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg></div>
+          <h3>رأس المال الجريء</h3>
+          <p>صناديق تستثمر مبالغ كبيرة في مشاريع أثبتت جدواها للنمو السريع، مع ضغط أعلى على النتائج.</p>
+        </article>
+        <article class="card rise" style="--d:.5s">
+          <span class="num">د</span>
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg></div>
+          <h3>الحاضنات والمسرّعات</h3>
+          <p>برامج توفر تمويلاً أولياً وتدريباً وإرشاداً وشبكة علاقات مقابل حصة صغيرة — مثالية في البداية.</p>
+        </article>
+      </div>
+      <div class="callout rise" style="--d:.62s">
+        <svg viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg>
+        <div>نصيحة عملية: أثبت الجدوى أولاً بتمويل ذاتي بسيط، فالمستثمرون <b>يستثمرون في الدليل لا في الحلم</b>.</div>
+      </div>
+    </div>
+    <span class="ghost">٠٧</span>
+  </section>
+
+  <!-- 8) الخاتمة -->
+  <section class="slide slide-cover">
+    <div class="cover-rings">
+      <div class="ring r1"></div>
+      <div class="ring r2"></div>
+      <div class="cover-orb o1"></div>
+    </div>
+    <div class="slide-inner">
+      <div class="slide-head" style="text-align:center;display:flex;flex-direction:column;align-items:center">
+        <span class="kicker rise" style="--d:.05s">الخلاصة</span>
+        <h2 class="rise" style="--d:.12s">نصائح <span class="grad">ذهبية</span> قبل أن تبدأ</h2>
+      </div>
+      <div class="cards cards-2" style="max-width:880px;margin:0 auto">
+        <article class="card rise" style="--d:.2s"><span class="num">١</span><h3>ابدأ الآن</h3><p>لا تنتظر الخطة المثالية؛ النسخة الأولى ستُصحَّح لاحقاً. الحركة تتعلم.</p></article>
+        <article class="card rise" style="--d:.28s"><span class="num">٢</span><h3>العميل قبل المنتج</h3><p>اسأل وبيِع قبل أن تبنِي. الفكرة لا تساوي شيئاً حتى يدفع أحدهم مقابلها.</p></article>
+        <article class="card rise" style="--d:.36s"><span class="num">٣</span><h3>فشل سريع، تعلّم أسرع</h3><p>اختبر الفرضيات بأقل تكلفة، واعتبر الفشل المبكر دورة تعليم مدفوعة الأجر.</p></article>
+        <article class="card rise" style="--d:.44s"><span class="num">٤</span><h3>اختر شريكاً يكمّلك</h3><p>الشريك المؤسس المناسب يضاعف فرص النجاح — ابحث عن من يكمّل نقاط ضعفك.</p></article>
+      </div>
+      <div class="final-cta rise" style="--d:.56s">
+        <div class="big">رحلتك تبدأ <span class="grad">بخطوة واحدة</span> — ابدأ اليوم</div>
+        <p>شكراً لاستماعكم · ريادة الأعمال · من الفكرة إلى المشروع الناشئ</p>
+      </div>
+    </div>
+    <span class="ghost">٠٨</span>
+  </section>
+
+</main>
+
+<!-- شريط التنقل -->
+<footer class="navbar">
+  <div class="nav-btns">
+    <button class="nav-btn" id="prevBtn" title="السابق (→)">
+      <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+    <button class="nav-btn" id="nextBtn" title="التالي (←)">
+      <svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>
+    </button>
+  </div>
+  <div class="dots" id="dots"></div>
+  <div class="counter">
+    <span class="cur" id="curNum">٠١</span>
+    <span class="sep">/</span>
+    <span class="total" id="totalNum">٠٨</span>
+  </div>
+</footer>
+
+<div class="keys-hint" id="keysHint"><b>←</b> التالي &nbsp;·&nbsp; <b>→</b> السابق &nbsp;·&nbsp; <b>O</b> العرض الشامل &nbsp;·&nbsp; السحب للتنقل</div>
+
+<!-- العرض الشامل -->
+<div class="overview" id="overview">
+  <button class="ov-close" id="ovClose" title="إغلاق (Esc)">
+    <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  </button>
+  <div class="ov-grid" id="ovGrid"></div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  const slides = Array.from(document.querySelectorAll(".slide"));
+  const total = slides.length;
+  let current = 0;
+  let overviewOpen = false;
+
+  const arDigits = n => String(n).replace(/\d/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
+  const pad2 = n => String(n).padStart(2, "0");
+
+  /* عناوين الشرائح للعرض الشامل */
+  const titles = [
+    "الغلاف — ريادة الأعمال",
+    "ما هي ريادة الأعمال؟",
+    "صفات رائد الأعمال الناجح",
+    "رحلة المشروع الناشئ في ٥ مراحل",
+    "التحقق من الفكرة ودراسة السوق",
+    "نموذج العمل التجاري BMC",
+    "خيارات التمويل للمشروع الناشئ",
+    "نصائح ذهبية وخاتمة"
+  ];
+
+  /* نقاط التنقل */
+  const dotsBox = document.getElementById("dots");
+  slides.forEach((_, i) => {
+    const b = document.createElement("button");
+    b.className = "dot-nav";
+    b.setAttribute("aria-label", "الشريحة " + (i + 1));
+    b.addEventListener("click", () => goTo(i));
+    dotsBox.appendChild(b);
+  });
+  const dots = Array.from(dotsBox.children);
+
+  /* بطاقات العرض الشامل */
+  const ovGrid = document.getElementById("ovGrid");
+  titles.forEach((t, i) => {
+    const c = document.createElement("div");
+    c.className = "ov-card";
+    c.style.setProperty("--i", i);
+    c.innerHTML = '<div class="n">' + arDigits(pad2(i + 1)) + '</div><h3>' + t + '</h3><p>اضغط للانتقال إلى الشريحة</p>';
+    c.addEventListener("click", () => { closeOverview(); goTo(i); });
+    ovGrid.appendChild(c);
+  });
+
+  const curNum = document.getElementById("curNum");
+  const totalNum = document.getElementById("totalNum");
+  const progressBar = document.getElementById("progressBar");
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
+
+  function render(){
+    slides.forEach((s, i) => {
+      s.classList.remove("active", "before");
+      if (i === current) s.classList.add("active");
+      else if (i < current) s.classList.add("before");
+    });
+    dots.forEach((d, i) => d.classList.toggle("on", i === current));
+    curNum.textContent = arDigits(pad2(current + 1));
+    totalNum.textContent = arDigits(pad2(total));
+    progressBar.style.width = ((current + 1) / total * 100) + "%";
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === total - 1;
+    if (!historyLock) history.replaceState(null, "", "#/" + (current + 1));
+  }
+
+  let historyLock = false;
+  function goTo(i){
+    i = Math.max(0, Math.min(total - 1, i));
+    if (i === current) { render(); return; }
+    current = i;
+    render();
+  }
+  const next = () => goTo(current + 1);
+  const prev = () => goTo(current - 1);
+
+  prevBtn.addEventListener("click", prev);
+  nextBtn.addEventListener("click", next);
+
+  /* لوحة المفاتيح */
+  document.addEventListener("keydown", e => {
+    if (e.code === "KeyO") { e.preventDefault(); toggleOverview(); return; }
+    if (e.key === "Escape") { closeOverview(); return; }
+    if (overviewOpen) return;
+    switch (e.key) {
+      case "ArrowLeft":  e.preventDefault(); next(); break;   /* RTL: التالي نحو اليسار */
+      case "ArrowRight": e.preventDefault(); prev(); break;
+      case " ":          e.preventDefault(); next(); break;
+      case "PageDown":   e.preventDefault(); next(); break;
+      case "PageUp":     e.preventDefault(); prev(); break;
+      case "Home":        e.preventDefault(); goTo(0); break;
+      case "End":         e.preventDefault(); goTo(total - 1); break;
+    }
+  });
+
+  /* عجلة الفأرة */
+  let wheelLock = false, wheelAcc = 0, wheelTimer = null;
+  window.addEventListener("wheel", e => {
+    if (overviewOpen) return;
+    const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    wheelAcc += d;
+    clearTimeout(wheelTimer);
+    wheelTimer = setTimeout(() => wheelAcc = 0, 120);
+    if (wheelLock || Math.abs(wheelAcc) < 45) return;
+    wheelLock = true;
+    const dir = wheelAcc > 0 ? 1 : -1;
+    wheelAcc = 0;
+    dir > 0 ? next() : prev();
+    setTimeout(() => wheelLock = false, 950);
+  }, { passive: true });
+
+  /* السحب باللمس */
+  let touchX = 0, touchY = 0;
+  document.addEventListener("touchstart", e => {
+    touchX = e.touches[0].clientX; touchY = e.touches[0].clientY;
+  }, { passive: true });
+  document.addEventListener("touchend", e => {
+    if (overviewOpen) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    const dy = e.changedTouches[0].clientY - touchY;
+    if (Math.abs(dx) < 55 || Math.abs(dx) < Math.abs(dy)) return;
+    dx < 0 ? next() : prev();   /* RTL: السحب نحو اليسار = التالي */
+  }, { passive: true });
+
+  /* العرض الشامل */
+  const overview = document.getElementById("overview");
+  function toggleOverview(){ overviewOpen ? closeOverview() : openOverview(); }
+  function openOverview(){ overviewOpen = true; overview.classList.add("open"); }
+  function closeOverview(){ overviewOpen = false; overview.classList.remove("open"); }
+  document.getElementById("overviewBtn").addEventListener("click", toggleOverview);
+  document.getElementById("ovClose").addEventListener("click", closeOverview);
+  overview.addEventListener("click", e => { if (e.target === overview) closeOverview(); });
+
+  /* توهج يتبع المؤشر */
+  const glow = document.getElementById("cursorGlow");
+  let gx = innerWidth / 2, gy = innerHeight / 2, tx = gx, ty = gy;
+  window.addEventListener("mousemove", e => { tx = e.clientX; ty = e.clientY; }, { passive: true });
+  (function loop(){
+    gx += (tx - gx) * .08; gy += (ty - gy) * .08;
+    glow.style.left = gx + "px"; glow.style.top = gy + "px";
+    requestAnimationFrame(loop);
+  })();
+
+  /* استعادة الشريحة من الرابط */
+  const m = location.hash.match(/^#\/?(\d+)$/);
+  if (m) current = Math.min(total, Math.max(1, +m[1])) - 1;
+
+  render();
+
+  /* إخفاء التلميح بعد مرور الوقت */
+  setTimeout(() => { const h = document.getElementById("keysHint"); if (h) h.remove(); }, 7500);
+})();
+</script>
+</body>
+</html>
